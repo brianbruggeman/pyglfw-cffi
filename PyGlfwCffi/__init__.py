@@ -1,5 +1,5 @@
 ####################################################################################################
-# 
+#
 # pyglfw-cffi - A Python Wrapper for GLFW.
 # Copyright (C) 2014 Fabrice Salvaire
 #
@@ -7,15 +7,15 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 ####################################################################################################
 
 ####################################################################################################
@@ -45,13 +45,13 @@ _glfw = None
 # Use a function in order to don't spoil the module
 def _init():
     glfw_library = None
-    
+
     # First if there is an environment variable pointing to the library
     if 'GLFW_LIBRARY' in _os.environ:
         GLFW_LIBRARY = _os.environ['GLFW_LIBRARY']
         if _os.path.exists():
             glfw_library = _os.path.realpath(GLFW_LIBRARY)
-    
+
     # Else, try to find it
     if glfw_library is None:
         ordered_library_names = ['glfw', 'glfw3']
@@ -59,7 +59,7 @@ def _init():
             glfw_library = _find_library(library_name)
             if glfw_library is not None:
                 break
-    
+
     # Else, we failed and exit
     if glfw_library is None:
         raise OSError('GLFW library not found')
@@ -83,7 +83,7 @@ def _init():
                 camel_case_function = match.group(1)
                 function = camel_case_re.sub( r'_\1', camel_case_function).lower()
                 six.print_('{} = _glfw.glfw{}'.format(function, camel_case_function))
-            
+
 _init()
 
 ####################################################################################################
@@ -198,7 +198,12 @@ def create_window(width=640, height=480, title="GLFW Window", monitor=_ffi.NULL,
     # if monitor is None:
     #     monitor = _ffi.NULL
     # monitor = ffi.cast('void *', monitor)
-    return _glfw.glfwCreateWindow(width, height, title.encode('utf-8'), monitor, share)
+    w, h, m, s = width, height, monitor, share
+    t = title.encode('utf-8')
+    window = _glfw.glfwCreateWindow(w, h, t, m, s)
+    if window == _ffi.NULL:
+        window = None
+    return window
 
 ####################################################################################################
 #
@@ -234,7 +239,7 @@ def set_error_callback(func):
     _glfw.glfwSetErrorCallback(wrapper)
 
 ####################################################################################################
-# 
+#
 # End
-# 
+#
 ####################################################################################################
