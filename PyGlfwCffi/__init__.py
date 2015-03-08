@@ -1,4 +1,4 @@
-####################################################################################################
+##########################################################################
 #
 # pyglfw-cffi - A Python Wrapper for GLFW.
 # Copyright (C) 2014 Fabrice Salvaire
@@ -16,33 +16,35 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-####################################################################################################
+##########################################################################
 
-####################################################################################################
+##########################################################################
 
 import six
 from six.moves import xrange
 
-####################################################################################################
+##########################################################################
 
 import os as _os
 import re
 
 from cffi import FFI as _FFI
 
-####################################################################################################
+##########################################################################
 
 from ctypes.util import find_library as _find_library
 # from util import _find_library
 
 from .Constantes import *
 
-####################################################################################################
+##########################################################################
 
 _ffi = _FFI()
 _glfw = None
 
 # Use a function in order to don't spoil the module
+
+
 def _init():
     glfw_library = None
 
@@ -81,15 +83,18 @@ def _init():
             match = function_re.match(line)
             if match:
                 camel_case_function = match.group(1)
-                function = camel_case_re.sub( r'_\1', camel_case_function).lower()
-                six.print_('{} = _glfw.glfw{}'.format(function, camel_case_function))
+                function = camel_case_re.sub(
+                    r'_\1', camel_case_function).lower()
+                six.print_(
+                    '{} = _glfw.glfw{}'.format(function, camel_case_function))
 
 _init()
 
-####################################################################################################
+##########################################################################
 #
 # Define some helper to wrap reference and structure return.
 #
+
 
 def _reference_wrapper(func, c_type, number_of_items):
     def wrapper(*args):
@@ -99,14 +104,18 @@ def _reference_wrapper(func, c_type, number_of_items):
         return [reference[0] for reference in references]
     return wrapper
 
+
 def _wrap_2_int(func):
     return _reference_wrapper(func, 'int', 2)
+
 
 def _wrap_3_int(func):
     return _reference_wrapper(func, 'int', 3)
 
+
 def _wrap_2_double(func):
     return _reference_wrapper(func, 'double', 2)
+
 
 def _list_wrapper(func):
     def wrapper(*args):
@@ -116,7 +125,7 @@ def _list_wrapper(func):
         return pointer[0:count[0]]
     return wrapper
 
-####################################################################################################
+##########################################################################
 
 # Fixme: how to do this automatically ?
 
@@ -192,7 +201,8 @@ wait_events = _glfw.glfwWaitEvents
 window_hint = _glfw.glfwWindowHint
 window_should_close = _glfw.glfwWindowShouldClose
 
-####################################################################################################
+##########################################################################
+
 
 def create_window(width=640, height=480, title="GLFW Window", monitor=_ffi.NULL, share=_ffi.NULL):
     # if monitor is None:
@@ -205,7 +215,7 @@ def create_window(width=640, height=480, title="GLFW Window", monitor=_ffi.NULL,
         window = None
     return window
 
-####################################################################################################
+##########################################################################
 #
 # Callback decorators
 #
@@ -226,9 +236,10 @@ window_pos_callback = _ffi.callback('void (GLFWwindow*, int, int)')
 window_refresh_callback = _ffi.callback('void (GLFWwindow*)')
 window_size_callback = _ffi.callback('void (GLFWwindow*, int, int)')
 
-####################################################################################################
+##########################################################################
 
 _error_callback_wrapper = None
+
 
 def set_error_callback(func):
     @error_callback
@@ -238,8 +249,8 @@ def set_error_callback(func):
     _error_callback_wrapper = wrapper
     _glfw.glfwSetErrorCallback(wrapper)
 
-####################################################################################################
+##########################################################################
 #
 # End
 #
-####################################################################################################
+##########################################################################
